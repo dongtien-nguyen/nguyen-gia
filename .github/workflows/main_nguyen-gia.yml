@@ -28,15 +28,9 @@ jobs:
           npm install
           npm --prefix client install
           npm --prefix client run build
-          npm --prefix server install
+          npm run build
 
-      - name: Zip artifact for deployment
-        run: |
-          mkdir -p deploy
-          cp -r server/* deploy/
-          cp -r client/dist deploy/client/
-          cd deploy
-          zip -r ../release.zip .
+      - run: zip -r release.zip . -x '*.git*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
