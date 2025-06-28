@@ -1,4 +1,3 @@
-// server/server.js  (ES-module style)
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -28,7 +27,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/categories', categoriesRouter);
 
 /* ---------- Client-side routing fallback ---------- */
-app.get('*', (_req, res) => {
+app.get('*', (_req, res) => {        // ✅ works in Express 5
   res.sendFile(path.join(staticPath, 'index.html'));
 });
 

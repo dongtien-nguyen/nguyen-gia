@@ -1,21 +1,26 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const router = express.Router();
+// routes/categories.js      (Updated to use async/await)
+import { Router } from 'express';
+import fs from 'fs/promises'; // Use the promise-based version
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const filePath = path.join(__dirname, '../data/categories.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-router.get('/', (req, res) => {
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Lỗi đọc categories.json' });
+const router = Router();
+const filePath = path.join(__dirname, '..', 'data', 'categories.json');
 
-    try {
-      const categories = JSON.parse(data);
-      res.json(categories);
-    } catch {
-      res.status(500).json({ error: 'Dữ liệu không hợp lệ' });
-    }
-  });
+/* ---------- GET /api/categories ---------- */
+router.get('/', async (_req, res) => {
+  try {
+    const raw = await fs.readFile(filePath, 'utf-8');
+    const categories = JSON.parse(raw);
+    res.json(categories);
+  } catch (err) {
+    // This single catch block handles both file read errors and JSON parsing errors
+    console.error("❌ Lỗi categories:", err);
+    res.status(500).json({ error: 'Không thể lấy dữ liệu categories' });
+  }
 });
 
-module.exports = router;
+export default router;
