@@ -1,30 +1,38 @@
+// server/server.js  (ES-module style)
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const staticPath = path.join(__dirname, '..', 'client', 'dist');
-app.use(express.static(staticPath));
+import productsRouter from './routes/products.js';
+import categoriesRouter from './routes/categories.js';
+
+// Resolve __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// ===== Middleware =====
-app.use(cors()); // Cho phép truy cập từ frontend khác origin
-app.use(express.json()); // Hỗ trợ parse JSON body
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Truy cập ảnh đã upload
+/* ---------- Middleware ---------- */
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ===== Routes =====
-app.use('/api/products', require('./routes/products'));
-app.use('/api/categories', require('./routes/categories'));
+/* ---------- Serve the React build ---------- */
+const staticPath = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(staticPath));
 
-// send index.html for any route React handles
-app.get('*', (_req, res) =>
-  res.sendFile(path.join(staticPath, 'index.html'))
-);
+/* ---------- API routes ---------- */
+app.use('/api/products', productsRouter);
+app.use('/api/categories', categoriesRouter);
 
-// ===== Start Server =====
-app.listen(PORT, () => {
-  console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
+/* ---------- Client-side routing fallback ---------- */
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
+
+/* ---------- Start server ---------- */
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on port ${PORT}`)
+);
