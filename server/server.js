@@ -3,15 +3,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
-// Since you are using "type": "module" in your client, it's good practice to be consistent.
-// If your server/package.json doesn't have "type": "module", you should add it or use require statements instead.
-// For this example, I'm assuming "type": "module" in server/package.json.
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const staticPath = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(staticPath));
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 // ===== Middleware =====
 app.use(cors()); // Cho phép truy cập từ frontend khác origin
@@ -22,15 +19,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Truy c�
 app.use('/api/products', require('./routes/products'));
 app.use('/api/categories', require('./routes/categories'));
 
-// --- Serve Static React App ---
-// This tells Express to serve any static files from the client's build directory.
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
-
-// This is the catch-all route. It sends back the main index.html file
-// for any request that doesn't match one of the API routes or a static file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
-});
+// send index.html for any route React handles
+app.get('*', (_req, res) =>
+  res.sendFile(path.join(staticPath, 'index.html'))
+);
 
 // ===== Start Server =====
 app.listen(PORT, () => {
