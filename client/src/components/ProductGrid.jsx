@@ -10,7 +10,7 @@ export default function ProductGrid({ products }) {
         >
           <div className="relative w-full pb-[100%] overflow-hidden rounded-md">
             <img
-              src={`http://localhost:8080${product.image}`}
+              src={`https://nguyen-gia.azurewebsites.net${product.image}`}
               alt={product.name}
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"
