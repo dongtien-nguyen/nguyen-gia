@@ -37,7 +37,7 @@ export default function ProductModal({
         setUploading(true);
 
         try {
-            const res = await fetch("http://localhost:8080/api/products/upload", {
+            const res = await fetch("https://nguyen-gia.azurewebsites.net/api/products/upload", {
                 method: "POST",
                 body: formData
             });
@@ -118,7 +118,7 @@ export default function ProductModal({
                             src={
                                 selectedFile
                                     ? URL.createObjectURL(selectedFile)
-                                    : `http://localhost:8080${newProduct.image}`
+                                    : `https://nguyen-gia.azurewebsites.net${newProduct.image}`
                             }
                             alt="Preview"
                             className="h-24 object-cover border rounded"
